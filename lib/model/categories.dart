@@ -1,14 +1,14 @@
-class Foods {
+class Categories {
   String? _name;
 
   String? get name => _name;
 
-  Foods({
+  Categories({
       String? name}){
     _name = name;
 }
 
-  Foods.fromJson(dynamic json) {
+  Categories.fromJson(dynamic json) {
     _name = json['name'];
   }
 

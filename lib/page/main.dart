@@ -1,8 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_fundamental/model/restaurant.dart';
+import 'package:flutter_fundamental/model/restaurants.dart';
+import 'package:flutter_fundamental/network/api_services.dart';
 import 'package:flutter_fundamental/page/detail.dart';
+import 'package:flutter_fundamental/page/restaurant_list.dart';
+import 'package:flutter_fundamental/page/search.dart';
+import 'package:flutter_fundamental/page/search_input.dart';
+import 'package:flutter_fundamental/provider/restaurant_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,8 +27,12 @@ class MyApp extends StatelessWidget {
         HomePage.routeName: (context) => HomePage(),
         DetailPage.routeName: (context) => DetailPage(
               restaurant:
-                  ModalRoute.of(context)?.settings.arguments as Restaurant,
+                  ModalRoute.of(context)?.settings.arguments as Restaurants,
             ),
+        SearchRestaurantPage.routeName: (context) => SearchRestaurantPage(
+          query: ModalRoute.of(context)?.settings.arguments as String?,
+        ),
+        SearchInputPage.routeName: (context) => SearchInputPage()
       },
     );
   }
@@ -43,46 +53,21 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Restaurants'),
+          actions: [IconButton(onPressed: () {
+            pushSearchInput();
+          }, icon: Icon(Icons.search))],
         ),
         body: SafeArea(
-            child: FutureBuilder<String>(
-                future: DefaultAssetBundle.of(context)
-                    .loadString('assets/local_restaurant.json'),
-                builder: (context, snapshot) {
-                  final List<Restaurant> restaurants =
-                      parseRestaurant(snapshot.data);
-                  return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: restaurants.length,
-                      itemBuilder: (context, index) {
-                        return _itemRestaurant(context, restaurants[index]);
-                      });
-                })));
+            child: ChangeNotifierProvider<RestaurantProvider>(
+          create: (_) => RestaurantProvider(apiService: ApiServices()),
+          child: RestaurantListPage(),
+        )));
   }
 
-  Widget _itemRestaurant(BuildContext context, Restaurant restaurant) {
-    return ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        leading: Image.network(
-          restaurant.pictureId.toString(),
-          width: 100,
-        ),
-        title: Text(restaurant.name.toString()),
-        subtitle: Text(restaurant.city.toString()),
-        onTap: () {
-          Navigator.pushNamed(context, DetailPage.routeName,
-              arguments: restaurant);
-        });
-  }
-
-  List<Restaurant> parseRestaurant(String? json) {
-    if (json == null) {
-      return [];
-    }
-
-    final List parsed = jsonDecode(json);
-    return parsed.map((json) => Restaurant.fromJson(json)).toList();
+  pushSearchInput() async {
+    await Navigator.pushNamed(context, SearchInputPage.routeName)
+        .then((value) {
+      Navigator.pushNamed(context, SearchRestaurantPage.routeName, arguments: value);
+    });
   }
 }
