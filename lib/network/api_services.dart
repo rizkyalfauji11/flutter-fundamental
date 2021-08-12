@@ -10,28 +10,39 @@ class ApiServices {
   static final _detail = "detail/";
 
   Future<RestaurantResponse> getList() async {
-    final response = await http.get(Uri.parse(_baseUrl + _list));
-    if (response.statusCode == 200)
-      return RestaurantResponse.fromJson(json.decode(response.body));
-    else
-      throw Exception('Failed to fetch list');
+    try {
+      final response = await http.get(Uri.parse(_baseUrl + _list));
+      if (response.statusCode == 200)
+        return RestaurantResponse.fromJson(json.decode(response.body));
+      else
+        throw Exception('Failed to fetch list');
+    } catch (e) {
+      throw Exception('No Internet Connection');
+    }
   }
 
   Future<RestaurantResponse> getListByName(String query) async {
-    final response =
-        await http.get(Uri.parse(_baseUrl + _search + query));
-    print(Uri.parse(_baseUrl + _search + query));
-    if (response.statusCode == 200)
-      return RestaurantResponse.fromJson(json.decode(response.body));
-    else
-      throw Exception('Failed to fetch list');
+    try {
+      final response = await http.get(Uri.parse(_baseUrl + _search + query));
+      print(Uri.parse(_baseUrl + _search + query));
+      if (response.statusCode == 200)
+        return RestaurantResponse.fromJson(json.decode(response.body));
+      else
+        throw Exception('Failed to fetch list');
+    } catch (e) {
+      throw Exception('No Internet Connection');
+    }
   }
 
   Future<DetailRestaurantResponse> getDetailRestaurant(String id) async {
-    final response = await http.get(Uri.parse(_baseUrl + _detail + id));
-    if (response.statusCode == 200)
-      return DetailRestaurantResponse.fromJson(json.decode(response.body));
-    else
-      throw Exception('Failed to fetch list');
+    try {
+      final response = await http.get(Uri.parse(_baseUrl + _detail + id));
+      if (response.statusCode == 200)
+        return DetailRestaurantResponse.fromJson(json.decode(response.body));
+      else
+        throw Exception('Failed to fetch list');
+    } catch (e) {
+      throw Exception('No Internet Connection');
+    }
   }
 }

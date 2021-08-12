@@ -22,7 +22,6 @@ class DetailRestaurantProvider extends ChangeNotifier {
 
   ResultState get state => _state;
 
-
   Future<dynamic> _fetchDetailRestaurant(String id) async {
     try {
       _state = ResultState.Loading;
@@ -43,5 +42,4 @@ class DetailRestaurantProvider extends ChangeNotifier {
       return _message = e.toString();
     }
   }
-
 }

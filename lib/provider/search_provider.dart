@@ -22,7 +22,6 @@ class SearchRestaurantProvider extends ChangeNotifier {
 
   ResultState get state => _state;
 
-
   Future<dynamic> _fetchRestaurant(String query) async {
     try {
       _state = ResultState.Loading;
@@ -43,5 +42,4 @@ class SearchRestaurantProvider extends ChangeNotifier {
       return _message = e.toString();
     }
   }
-
 }
