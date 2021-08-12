@@ -9,12 +9,12 @@ class Foods {
 }
 
   Foods.fromJson(dynamic json) {
-    _name = json["name"];
+    _name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
-    map["name"] = _name;
+    map['name'] = _name;
     return map;
   }
 
