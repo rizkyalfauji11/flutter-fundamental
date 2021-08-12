@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fundamental/model/restaurants.dart';
+import 'package:flutter_fundamental/provider/database_provider.dart';
 import 'package:flutter_fundamental/provider/restaurant_provider.dart';
 import 'package:flutter_fundamental/provider/search_provider.dart';
 import 'package:provider/provider.dart';
@@ -7,12 +8,31 @@ import 'package:provider/provider.dart';
 import 'detail.dart';
 
 class RestaurantListPage extends StatelessWidget {
+  bool isBookmarkPage;
+
+  RestaurantListPage({required this.isBookmarkPage});
+
   static const String baseImageUrl =
       "https://restaurant-api.dicoding.dev/images/medium/";
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RestaurantProvider>(builder: (context, state, _) {
+    return isBookmarkPage? Consumer<DatabaseProvider>(builder: (context, state, _) {
+      if (state.state == ResultState.HasData) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: state.bookmarks.length,
+          itemBuilder: (context, index) {
+            var restaurant = state.bookmarks[index];
+            return _itemRestaurant(context, restaurant);
+          },
+        );
+      } else {
+        return Center(
+          child: Text(state.message),
+        );
+      }
+    }) : Consumer<RestaurantProvider>(builder: (context, state, _) {
       if (state.state == ResultState.Loading) {
         return Center(child: CircularProgressIndicator());
       } else if (state.state == ResultState.HasData) {
